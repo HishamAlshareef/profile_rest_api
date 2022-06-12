@@ -12,15 +12,17 @@ class UserProfileManager(BaseUserManager):
         if not email:
             raise ValueError("User must have an email address")
 
-        email = self.normalize_email()
+        email = self.normalize_email(email)
         """Normalize the email address by lowercasing the domain part of the it.  """
         user = self.model(email=email, name=name)
 
-        user.setpassword(password)
+        user.set_password(password)
         """password is encrypted we want to make sure the password is converted to a hash"""
         user.save(using=self._db)
         """this is the standard Django basically the standard"""
         return user
+
+
     def create_superuser(self, email, name, password):
         """Create and save a new superuser with given details"""
         user = self.create_user(email, name, password)
