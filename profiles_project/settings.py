@@ -122,6 +122,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+"""Below auth Tells Django to look at our profiles API app and then find the model called user profile and use this for 
+all of our authentication and user registration in our project """
+
+AUTH_USER_MODEL = 'profiles_api.UserProfile'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
