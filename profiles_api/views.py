@@ -2,11 +2,14 @@ from rest_framework.views import APIView  # We created Hello APIView class
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets  # We created Hello ViewSet class
+from rest_framework.authentication import TokenAuthentication
 
 """The status object from the rest framework is a list of handy HTTP status codes that you can use when returning 
 responses from your API"""
 
 from profiles_api import serializers
+from profiles_api import models
+from profiles_api import permissions
 
 
 # we're going to use this to tell our API view what data to expect when making post put and patch requests to our API
@@ -104,3 +107,11 @@ class HelloViewSet(viewsets.ViewSet):
         return Response({'http_method': 'DELETE'})
 
 
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)   # Add a comma after TokenAuthentication
+    # so that this gets created as a tuple instead of just a single item
+    permission_classes = (permissions.UpdateOwnProfile,)
+    # The update partial update and destroy to manage specific model objects in the database
