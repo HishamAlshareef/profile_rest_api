@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets  # We created Hello ViewSet class
 from rest_framework.authentication import TokenAuthentication
+from rest_framework import filters  # Need to be clarify
 
 """The status object from the rest framework is a list of handy HTTP status codes that you can use when returning 
 responses from your API"""
@@ -74,7 +75,7 @@ class HelloViewSet(viewsets.ViewSet):
             'Provides more functionality with less code',
         ]
 
-        return Response(({'message': 'Hello!' , 'a_viewset': a_viewset}))
+        return Response(({'message': 'Hello!', 'a_viewset': a_viewset}))
 
     def create(self, request):
         """Create a new hello message"""
@@ -83,7 +84,7 @@ class HelloViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
             message = f'Hello {name}!'
-            return Response({'message' : message})
+            return Response({'message': message})
         else:
             return Response(
                 serializer.errors,
@@ -107,11 +108,14 @@ class HelloViewSet(viewsets.ViewSet):
         return Response({'http_method': 'DELETE'})
 
 
+# The update partial update and destroy to manage specific model objects in the database
+
 class UserProfileViewSet(viewsets.ModelViewSet):
     """Handle creating and updating profiles"""
     serializer_class = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
-    authentication_classes = (TokenAuthentication,)   # Add a comma after TokenAuthentication
+    authentication_classes = (TokenAuthentication,)  # Add a comma after TokenAuthentication
     # so that this gets created as a tuple instead of just a single item
     permission_classes = (permissions.UpdateOwnProfile,)
-    # The update partial update and destroy to manage specific model objects in the database
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'email',)
