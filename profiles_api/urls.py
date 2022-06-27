@@ -16,10 +16,10 @@ router.register('profile', views.UserProfileViewSet)  # no need to specify a bas
 # we have in our view set a queryset object
 
 urlpatterns = [
-    path('hello-view', views.HelloApiView.as_view()),
+    path('hello-view/', views.HelloApiView.as_view()),
     # standard function that we call to convert our api view class tobe rendered by our urls
     # so basically Django rest framework will call this get function if a HTTP GET request is made to our URL
-
+    path('login/', views.UserLoginApiView.as_view()),
     path('', include(router.urls))  # as you register new routes with our router it generates a list of URLs that are
     # associated for our viewset it figures out the URLs that are required
 

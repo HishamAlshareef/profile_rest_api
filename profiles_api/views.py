@@ -4,6 +4,10 @@ from rest_framework import status
 from rest_framework import viewsets  # We created Hello ViewSet class
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters  # Need to be clarify
+from rest_framework.authtoken.views import ObtainAuthToken
+# That comes with the Django restframework that we can use to generate an authtoken
+
+from rest_framework.settings import api_settings
 
 """The status object from the rest framework is a list of handy HTTP status codes that you can use when returning 
 responses from your API"""
@@ -119,3 +123,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',)
+
+
+class UserLoginApiView(ObtainAuthToken):
+    """Handle crating user authentication tokens"""
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
