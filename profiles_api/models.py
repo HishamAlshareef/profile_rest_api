@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
+from django.conf import settings
 
 
 class UserProfileManager(BaseUserManager):
@@ -22,7 +23,6 @@ class UserProfileManager(BaseUserManager):
         """this is the standard Django basically the standard"""
         return user
 
-
     def create_superuser(self, email, name, password):
         """Create and save a new superuser with given details"""
         user = self.create_user(email, name, password)
@@ -32,7 +32,6 @@ class UserProfileManager(BaseUserManager):
         user.save(using=self._db)
 
         return user
-
 
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
@@ -45,7 +44,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     objects = UserProfileManager()
 
-    USERNAME_FIELD= 'email'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
     def get_full_name(self):
@@ -59,5 +58,25 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """ Return string representation of our user"""
         return self.email
+
+
+class ProfileFeedItem(models.Model):
+    """Profile status update"""
+    user_profile = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete= models.CASCADE
+        # we need to provide is the on delete argument so type on delete it tells Dja
+        # ngo or it tells the database what to do if the remote field is deleted
+    )
+    status_text = models.CharField(max_length=255)
+    created_on = models.DateTimeField(auto_now_add=True)
+    # create a new feed item automatically add the date timestamp that the item was created
+
+    def __str__(self):
+        """Return the model as a string"""
+        return  self.status_text
+
+    # when we convert class ProfileFeedItem(models.Model): to a string
+    # we want to see the status text value that is associated to the model
 
 

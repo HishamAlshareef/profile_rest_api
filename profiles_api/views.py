@@ -11,6 +11,9 @@ from rest_framework.settings import api_settings
 
 """The status object from the rest framework is a list of handy HTTP status codes that you can use when returning 
 responses from your API"""
+#from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated  # Django rest framework has another handy
+# permission that comes with it by default just called is authenticated
 
 from profiles_api import serializers
 from profiles_api import models
@@ -129,3 +132,26 @@ class UserLoginApiView(ObtainAuthToken):
     """Handle crating user authentication tokens"""
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
+
+# Create a viewset for our profile feed items
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed items"""
+    authentication_classes = (TokenAuthentication,)  # use the token authentication to authenticate requests
+    serializer_class = serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()  # manage all of our profile feed item objects from our model in our viewset
+    # serializer_class and validated and then the serializer.save function is called by default
+    permission_classes = (
+        permissions.UpdateOwnStatus,
+       # IsAuthenticatedOrReadOnly
+        IsAuthenticated
+    )
+
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged in user"""
+        # create function is a handy feature of the Django rest framework that allows you to
+        # override the behavior or customize the behavior for creating objects through a Model Viewset
+        serializer.save(user_profile=self.request.user)
+        # The serializer is a model serializer so it has a save function assigned to it
+        # and that save function is used to save the contents of the serializer to an object in the database
+
+        # if the user has authenticated then the request will have a user associated to the authenticated user

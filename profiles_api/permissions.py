@@ -11,3 +11,17 @@ class UpdateOwnProfile(permissions.BasePermission):
             return True
 
         return obj.id == request.user.id
+
+
+class UpdateOwnStatus(permissions.BasePermission):
+    """Allow users to update their own status"""
+
+    def has_object_permission(self, request, view, obj):
+        """Check the user is trying to update their own status"""
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # This permission class is only to ensure that users can update their own status we're going to allow all
+        # these methods that are in the safe methods through so that is if they're trying to retrieve or create a new
+        # item we're going to return True
+
+        return obj.user_profile.id == request.user.id
