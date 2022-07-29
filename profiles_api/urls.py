@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from profiles_api import views
 
 router = DefaultRouter()
-router.register('hello-viewset', views.HelloViewSet, basename='hello-viewset')
+router.register('hello-viewset', views.HelloViewSet, base_name='hello-viewset')
 # to register specific view sets with our router
 # because the router will create all the four URLs for us, we don't need to specify a forward slash here when we
 # define our view set URL names

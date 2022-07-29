@@ -39,6 +39,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return user
 
+    def update(self, instance, validated_data):
+        """Handle updating user account"""
+        if 'password' in validated_data:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+
+        return super().update(instance, validated_data)
+
 
 class ProfileFeedItemSerializer(serializers.ModelSerializer):
     """Serializes profile feed items"""
@@ -49,13 +57,9 @@ class ProfileFeedItemSerializer(serializers.ModelSerializer):
 
         fields = ('id', 'user_profile', 'status_text', 'created_on')
         # The 'id' is set up by Django by default it's automatically set to read only
-        extra_kwargs={'user_profile':{'read_only':True}}
+        extra_kwargs = {'user_profile': {'read_only': True}}
 
 
-    def update(self, instance, validated_data):
-        """Handle updating user account"""
-        if 'password' in validated_data:
-            password = validated_data.pop('password')
-            instance.set_password(password)
 
-        return super().update(instance, validated_data)
+
+
